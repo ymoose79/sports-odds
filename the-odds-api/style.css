@@ -1,0 +1,90 @@
+:root {
+  /* --main-bg-color: #cbcea8; */
+  --main-bg-color: #849492;
+  --main-dog-color: #66453d;
+  --main-white-color: #f2f3ed;
+}
+
+.--bet {
+  margin-top: 10em;
+  background-color: var(--main-bg-color);
+  border: 5px solid var(--main-white-color);
+}
+
+/* .row {
+  background-color: var(--main-bg-color);
+} */
+
+.--break {
+  color: rgba(203, 207, 185, 0.753);
+}
+
+#betWindow {
+  /* margin: 0em 5em 10em; */
+  /* margin-top: 5em; */
+  /* background-color: #849492; */
+  background-color: var(--main-bg-color);
+  border: 5px solid var(--main-white-color);
+}
+
+.games {
+  border: 8px solid var(--main-white-color);
+  background: rgb(121, 126, 126);
+  background: linear-gradient(
+    187deg,
+    rgba(121, 126, 126, 1) 0%,
+    rgba(132, 148, 146, 1) 12%,
+    rgba(236, 246, 245, 1) 100%
+  );
+}
+
+.home {
+  /* border-right: thick double burlywood; */
+  color: #c5e5fa;
+}
+
+.away {
+  /* color: #455158; */
+  color: rgb(134, 116, 36);
+}
+
+.sport-box-title {
+  background-color: var(--main-white-color);
+}
+
+.odd-box {
+  border: 2px solid rgb(226, 215, 215);
+  padding: 1em;
+  background-color: #9fb3b0;
+}
+.chalk {
+  color: blue;
+}
+
+.dog {
+  /* color: var(--main-dog-color); */
+  color: #c21700;
+}
+
+.teams {
+  color: var(--main-dog-color);
+}
+
+/* #draw {
+} */
+
+.--hidden {
+  display: none;
+}
+
+.time {
+  /* color: #455158; */
+  color: rgb(134, 116, 36);
+
+  /* color: rgb(125, 134, 36); */
+  text-decoration: underline;
+}
+
+.date {
+  color: #c5e5fa;
+}
