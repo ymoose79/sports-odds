@@ -10,14 +10,13 @@
 // [x]  add home/away
 // [x]  add color for chalk v dogs 
 // [x]    - also make it pop more 
+// []  erase cards and sportname if user picks different fields
 
 // fix CSS
 // [?]    - background image/icon for sport?
 // []   
 
 // fix JS
-// []  slow load page so API can fetch
-// []  erase matches if user picks different fields
 // []
 // []
 // []
@@ -29,16 +28,17 @@
 // populate html
 const dropDSport = document.getElementById('sport');
 const betWindow = document.getElementById('betWindow');
-const drawHide = document.getElementById('draw')
-const gameRow = document.getElementById('gameRow')
-
+const drawHide = document.getElementById('draw');
+const gameRow = document.getElementById('gameRow');
+const hmmm = document.getElementById('hmmm');
+const title = document.getElementById('sport-box-title');
+const games = document.getElementById('games');
 
 // pull value from field
 const listSport = document.getElementById('sport-fields');
 const dropDDay = document.getElementById('day');
 
-const apiKey = '**************************c0bb72';
-
+const apiKey = 'd94ab81f5e68981779f0396bf7c0bb72';
 
 
 let homeOdds;
@@ -57,16 +57,12 @@ let awayB;
 
 
 // HELPER F{}  :  add/remove classes
-
 const removeHidden = function(x){
     document.querySelector(x).classList.remove('hidden');
 }
 const addHidden = function(add){
     document.querySelector(add).classList.add('hidden');
 }
-
-
-
 // HELPER F{}  :  split up team/player Names
 const firstAndLastHome = function (name) {
     homeA = name.split(' ')
@@ -87,9 +83,6 @@ const firstAndLastAway = function (name) {
     awayA = awayA.join(' ')
     return
 }
- 
-
-
 // HELPER F{}  :  add/remove chalk/dog hidden class from 
 const oddsHiddenClass = function (h, a) {
     if (h > a) {
@@ -105,9 +98,6 @@ const oddsHiddenClass = function (h, a) {
     }
     return
  }
-
-
-
 // HELPER F{}  :  pull and label odds from data
 const findOddValues = function (arr) {
     homeOdds = arr[0];
@@ -122,10 +112,6 @@ const findOddValues = function (arr) {
     oddsHiddenClass(homeOdds, awayOdds)
     return;
 }
-
-
-
-
 // HELPER F{}  :  format date/time locally
 const zuluTime = function (zDate) {
     var startTime = new Date(zDate)
@@ -144,24 +130,24 @@ const zuluTime = function (zDate) {
     time = timeString.replace(',', ' ')
     return 
 }
- 
+
 
 
 
 const pickSport = function () {
-    
+
     let sportInd;
     fetch(`https://api.the-odds-api.com/v3/sports/?apiKey=${apiKey}`)
         .then(res => {
             return res.json()
         })
         .then(data => {
-
             const keyMap = data.data.map(obj => obj.key);
             const titleMap = data.data.map(obj => obj.title);
         
             console.log(keyMap);
             console.log(titleMap);
+
 
             const x = data.data
             console.log(x[11]);
@@ -184,28 +170,22 @@ const pickSport = function () {
                 sportInd = listSport.value
                 console.log(keyMap[sportInd]);
                 
-
                 return fetch(`https://api.the-odds-api.com/v3/odds/?apiKey=${apiKey}&sport=${keyMap[sportInd]}&region=us&dateFormat=iso&oddsFormat=american`)
                 .then(res => res.json())
                 .then(data => {
-
+                    
                     const x = data.data
-                    console.log(x[0]);
+                    
+                    title.innerHTML = `${titleMap[sportInd]}`
+                    
+                    function removeAllChildNodes(gameRow) {
+                        while (gameRow.firstChild) {
+                            gameRow.removeChild(gameRow.firstChild);
+                        }
+                    }
+                    removeAllChildNodes(gameRow)
 
-                const htmlBet = `<div class="container sport-box-title text-center py-5">
-                <div class="row justify-content-center">
-                  <div class="col-6 ">
-                    <h1 class='display-2'>${titleMap[sportInd]}</h1>
-                  </div>
-                </div>
-              </div>
-                    
-              <div id="betWindow" class="container  text-center py-5 px-5" >
-              <div id='gameRow' class="row row-cols-1  row-cols-md-2 row-cols-lg-3"> `
-                    
-                betWindow.insertAdjacentHTML('beforebegin', htmlBet)
-                                    
-               // loop through and grab values to populate upcoming matches
+                    // loop through and grab values to populate upcoming matches
                     for (const obj of x) {
                         let sport = obj.sport_nice;
                         let home = obj.home_team;
@@ -225,55 +205,54 @@ const pickSport = function () {
 
                         // call Hf{} for date/time
                         zuluTime(obj.commence_time)
-                        
+                                               
                         const html = `
-                            <div class="games  text-center py-5">
-                         
-                            <div class="col justify-content-center">
-                            <div class="row --break justify-content-center ">
-                               <div class="date">
-                                  <h3>${date}</h3>
-                               </div>
-                             </div>
-
-                             <div class="col home">
-                                <h4 class="${homeOddsChalk}">Home </h4>
-                                <h4 class="${homeOddsDog}">Home </h4>
-                                <h1>${homeA}<br>${homeB}</h1>
-                                    <div class="odds wrapper py-4" id='dogs'>
-                                      <h4 class='odds ${homeOddsChalk}'> <span class='odd-box'>${homeOdds}</span>    chalk</h4>
-                                      <h4 class='odds ${homeOddsDog}'> <span class='odd-box'>${homeOdds}</span>  dogs</h4>
-                                    </div>
-                             </div>
-
-                            <div class="col pt-4 " id="draw">
-                                <h4 class='odds draw py-2 '>Draw:  <span id='draw'>${draw}</span></h4>
+                        <div id="games" class="games text-center py-5">
+                     
+                        <div class="col justify-content-center">
+                        <div class="row --break justify-content-center ">
+                           <div class="date">
+                              <h3>${date}</h3>
                            </div>
+                         </div>
+
+                         <div class="col home">
+                            <h4 class="${homeOddsChalk}">Home </h4>
+                            <h4 class="${homeOddsDog}">Home </h4>
+                            <h1>${homeA}<br>${homeB}</h1>
+                                <div class="odds wrapper py-4" id='dogs'>
+                                  <h4 class='odds ${homeOddsChalk}'> <span class='odd-box'>${homeOdds}</span>    chalk</h4>
+                                  <h4 class='odds ${homeOddsDog}'> <span class='odd-box'>${homeOdds}</span>  dogs</h4>
+                                </div>
+                         </div>
+
+                        <div class="col pt-4 " id="draw">
+                            <h4 class='odds draw py-2 '>Draw:  <span id='draw'>${draw}</span></h4>
+                       </div>
 
 
-                           <div class="col away pt-3">
-                             <h4 class="${awayOddsChalk} pt-3">Away </h4>
-                             <h4 class="${awayOddsDog} pt-3">Away </h4>
-                             <h1>${awayA}<br>${awayB}</h1>
-                                <div class="odds wrapper py-4" id='chalk'>
-                                <h4 class='odds ${awayOddsChalk}'> <span class='odd-box'>${awayOdds}</span>chalk   </h4>
-                                <h4 class='odds ${awayOddsDog}'> <span class='odd-box'>${awayOdds}</span>dogs    </h4>
-                             </div>
-                            </div>
+                       <div class="col away pt-3">
+                         <h4 class="${awayOddsChalk} pt-3">Away </h4>
+                         <h4 class="${awayOddsDog} pt-3">Away </h4>
+                         <h1>${awayA}<br>${awayB}</h1>
+                            <div class="odds wrapper py-4" id='chalk'>
+                            <h4 class='odds ${awayOddsChalk}'> <span class='odd-box'>${awayOdds}</span>chalk   </h4>
+                            <h4 class='odds ${awayOddsDog}'> <span class='odd-box'>${awayOdds}</span>dogs    </h4>
+                         </div>
+                        </div>
 
-                    <div class="row --break justify-content-center">
-                         <div class="time pt-3">
-                           <h3>${time}</h3>
-                         </div>
-                         </div>
-                         </div>
-                         </div>
-                       
-                    `;
+                <div class="row --break justify-content-center">
+                     <div class="time pt-3">
+                       <h3>${time}</h3>
+                     </div>
+                     </div>
+                     </div>
+                     </div>
+                   
+                `;
                         
-                        gameRow.insertAdjacentHTML("beforeend", html)
-                        betWindow.classList.remove('--hidden')
-                        
+                gameRow.insertAdjacentHTML("afterbegin", html)
+                hmmm.classList.remove('--hidden')
                     }
                 })
             })
